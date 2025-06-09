@@ -187,15 +187,18 @@ def dicListarQuantidade(dic):
 
 def dicRetirarQuantidade(dic, chave):
     visualizarTabela(dic)
-    retirar = inputDic('Digite o ID do incêndio que deseja RETIRAR do estoque: ', dic, chave)
+    retirar = inputDic('Digite o ID do insumo que deseja RETIRAR do estoque: ', dic, chave)
     # indice_retirar = dic[chave].index(int(retirar)) # Notação O Grande: O(n) (menos eficiente)
     indice_retirar = buscaBinaria(dic[chave], int(retirar)) # Notação O Grande: O(log n) (mais eficiente)
     nome_insumo = dic['Nome_Insumo'][indice_retirar]
-    quantidade = inputInt(f'Digite a quantidade que deseja RETIRAR do insumo {nome_insumo}: ')
-    if dic['Estoque'][indice_retirar] >= quantidade:
-        dic['Estoque'][indice_retirar] -= quantidade
-    else:
-        print('\n > Estoque Insuficiente!!! \n')
+    estoque_atual = dic['Estoque'][indice_retirar]
+    while True:
+        quantidade = inputInt(f'Digite a quantidade que deseja RETIRAR do insumo {nome_insumo} (estoque atual: {estoque_atual}): ')
+        if estoque_atual >= quantidade:
+            dic['Estoque'][indice_retirar] -= quantidade
+            break
+        else:
+            print('\n > Estoque Insuficiente!!! \n')
     return
 
 ### VARIÁVEIS GLOBAIS ###
