@@ -137,7 +137,7 @@ tipos = {
 }
 ```
 
-## 📄 Documentação de Código
+## 📄 Documentação Envoltória
 
 ### 🔺 Hipóteses e Dados Considerados
 
