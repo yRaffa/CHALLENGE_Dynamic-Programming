@@ -88,7 +88,7 @@ def visualizarTabela(dic):
     return
 
 # Função que adiciona um novo item ao dicionário
-def dicAdicionar(dic):
+def adicionar(dic):
     adicionar_id = max(dic['ID']) + 1 # Gera novo ID automaticamente
     dic['ID'].append(adicionar_id)
     print('\n > ADICIONAR dados de insumo a tabela: \n')
@@ -98,7 +98,7 @@ def dicAdicionar(dic):
     return
 
 # Função que consulta e exibe os dados de um item do dicionário com base no ID informado
-def dicConsultar(dic, chave):
+def consultar(dic, chave):
     visualizarTabela(dic)
     consultar = inputDic('Digite o ID do insumo que deseja CONSULTAR: ', dic, chave)
     # indice_consultar = dic[chave].index(int(consultar)) # Notação O Grande: O(n) (menos eficiente)
@@ -110,7 +110,7 @@ def dicConsultar(dic, chave):
     return
 
 # Função que atualiza os dados de um item do dicionário com base no ID informado
-def dicAtualizar(dic, chave):
+def atualizar(dic, chave):
     visualizarTabela(dic)
     atualizar = inputDic('Digite o ID do insumo que deseja ATUALIZAR: ', dic, chave)
     # indice_atualizar = dic[chave].index(int(atualizar)) # Notação O Grande: O(n) (menos eficiente)
@@ -135,7 +135,7 @@ def dicAtualizar(dic, chave):
     return
 
 # Função que exclui os dados de um item do dicionário com base no ID informado
-def dicExcluir(dic, chave):
+def excluir(dic, chave):
     visualizarTabela(dic)
     excluir = inputDic('Digite o ID do incêndio que deseja EXCLUIR: ', dic, chave)
     # indice_excluir = dic[chave].index(int(excluir)) # Notação O Grande: O(n) (menos eficiente)
@@ -145,7 +145,7 @@ def dicExcluir(dic, chave):
     return
 
 # Função que adiciona quantidade a um item do dicionário
-def dicAdicionarQuantidade(dic, chave):
+def adicionarQuantidade(dic, chave):
     visualizarTabela(dic)
     adicionar = inputDic('Digite o ID do insumo que deseja ADICIONAR QUANTIDADE ao estoque: ', dic, chave)
     # indice_adicionar = dic[chave].index(int(adicionar)) # Notação O Grande: O(n) (menos eficiente)
@@ -156,7 +156,7 @@ def dicAdicionarQuantidade(dic, chave):
     return
 
 # Função que lista os itens de um dicionario filtrando pela quantidade
-def dicListarQuantidade(dic):
+def listarQuantidade(dic):
     insumos_ordenados = {key: lista.copy() for key, lista in dic.items()}
     selectionSort(insumos_ordenados['Estoque'])
     indices_ordenados = range(len(insumos_ordenados['Estoque']))
@@ -166,7 +166,7 @@ def dicListarQuantidade(dic):
     return
 
 # Função que remove quantidade de um item do dicionário
-def dicRetirarQuantidade(dic, chave):
+def retirarQuantidade(dic, chave):
     visualizarTabela(dic)
     retirar = inputDic('Digite o ID do insumo que deseja RETIRAR do estoque: ', dic, chave)
     # indice_retirar = dic[chave].index(int(retirar)) # Notação O Grande: O(n) (menos eficiente)
@@ -182,6 +182,36 @@ def dicRetirarQuantidade(dic, chave):
             print('\n > Estoque Insuficiente!!! \n')
     return
 
+def reabastecerEstoque(dic):
+    custo_total = 0.0
+    relatorio = {
+        'ID': [],
+        'Nome_Insumo': [],
+        'Quantidade_Comprada': [],
+        'Custo_Unitario': [],
+        'Subtotal': []
+    }
+    for i in range(len(dic['ID'])):
+        quantidade_atual = dic['Estoque'][i]
+        quantidade_ideal = dic['Estoque_Ideal'][i]
+        if quantidade_atual < quantidade_ideal:
+            quantidade_comprada = quantidade_ideal - quantidade_atual
+            subtotal = quantidade_comprada * dic['Custo_Unitario'][i]
+            custo_total += subtotal
+            dic['Estoque'][i] = quantidade_ideal
+            relatorio['ID'].append(dic['ID'][i])
+            relatorio['Nome_Insumo'].append(dic['Nome_Insumo'][i])
+            relatorio['Quantidade_Comprada'].append(quantidade_comprada)
+            relatorio['Custo_Unitario'].append(dic['Custo_Unitario'][i])
+            relatorio['Subtotal'].append(subtotal)
+    if relatorio['ID']:
+        print('\n > Relatório de Reabastecimento')
+        visualizarTabela(relatorio)
+        print(f'Custo Total: R$ {custo_total:.2f}')
+    else:
+        print('\n > Estoque Cheio!!!')
+    return
+
 ### VARIÁVEIS GLOBAIS ###
 
 # Dicionário principal com os dados do estoque de insumos
@@ -190,7 +220,7 @@ insumos = {
     'Nome_Insumo' : ['Adrenalina', 'Dipirona', 'Gaze Esteril', 'Luvas Cirurgicas' , 'Mascaras N95', 'Seringas'],
     'Estoque' : [500, 1000, 3000, 2000, 300, 4000],
     'Estoque_Ideal' : [1000, 3000, 5000, 5000, 1000, 5000],
-    'Custo_Unitario' : [5, 1.3, 0.4, 0.8, 4.3, 0.4]
+    'Custo_Unitario' : [5.00, 1.30, 0.40, 0.80, 4.30, 0.40]
 }
 
 # Preenche o campo ID com valores sequenciais
@@ -205,7 +235,7 @@ tipos = {
 }
 
 # Opções disponíveis no menu principal
-opcoes_menu = ['0', '1', '2', '3', '4', '5', '6', '7', '8']
+opcoes_menu = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 ### CODIGO ###
 
@@ -219,6 +249,7 @@ while True: # Laço principal do sistema com menu de navegação
           '6 - LISTAR insumos por QUANTIDADE no estoque \n'
           '7 - EXCLUIR dados de insumo no estoque \n'
           '8 - RETIRAR insumo do estoque \n'
+          '9 - REABASTECER insumos em estoque \n'
           '0 - SAIR do sistema')
     
     # Escolha da opção do menu
@@ -229,26 +260,29 @@ while True: # Laço principal do sistema com menu de navegação
             visualizarTabela(insumos)
             input('\nPressione qualquer tecla para voltar... ')
         case '2': # Execução da função adicionar
-            dicAdicionar(insumos)
+            adicionar(insumos)
             input('\nNOVOS Dados ADICIONADOS!!!\nPressione qualquer tecla para voltar... ')
         case '3': # Execução da função adicionar quantidade
-            dicAdicionarQuantidade(insumos, 'ID')
+            adicionarQuantidade(insumos, 'ID')
             input('\nQUANTIDADE ADICIONADA ao estoque!!!\nPressione qualquer tecla para voltar... ')
         case '4': # Execução da função consultar
-            dicConsultar(insumos, 'ID')
+            consultar(insumos, 'ID')
             input('\nDados CONSULTADOS!!!\nPressione qualquer tecla para voltar... ')
         case '5': # Execução da função atualizar
-            dicAtualizar(insumos, 'ID')
+            atualizar(insumos, 'ID')
             input('\nDados ATUALIZADOS!!!\nPressione qualquer tecla para voltar... ')
         case '6': # Execução da função listar por quantidade
-            dicListarQuantidade(insumos)
+            listarQuantidade(insumos)
             input('\nInsumos LISTADOS por QUANTIDADE!!!\nPressione qualquer tecla para voltar... ')
         case '7': # Execução da função excluir
-            dicExcluir(insumos, 'ID')
+            excluir(insumos, 'ID')
             input('\nDados EXCLUIDOS!!!\nPressione qualquer tecla para voltar... ')
         case '8': # Execução da função retirar quantidade
-            dicRetirarQuantidade(insumos, 'ID')
+            retirarQuantidade(insumos, 'ID')
             input('\nQUANTIDADE RETIRADA do estoque!!!\nPressione qualquer tecla para voltar... ')
+        case '9': # Execução da função reabastecer
+            reabastecerEstoque(insumos)
+            input('\nREABASTECIMENTO realizado!!!\nPressione qualquer tecla para voltar... ')
         case '0': # Saida do sistema
             print('\n > SISTEMA FECHADO... \n')
             break
