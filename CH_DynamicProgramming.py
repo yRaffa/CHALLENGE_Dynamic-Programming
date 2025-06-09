@@ -182,6 +182,7 @@ def retirarQuantidade(dic, chave):
             print('\n > Estoque Insuficiente!!! \n')
     return
 
+# Função que reabastece quantidade de um item do dicionário
 def reabastecerEstoque(dic):
     custo_total = 0.0
     relatorio = {
