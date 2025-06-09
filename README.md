@@ -3,6 +3,7 @@
 # 🐍 Dynamic Programing (2ESA)
 
 ## 👥 Integrantes
+
 - RM 557709 - Augusto Ferreira Rogel de Souza
 - RM 554823 - Heitor Anderson Prestes de Oliveira Filho
 - RM 556668 - Lucca Ribeiro Cardinale
