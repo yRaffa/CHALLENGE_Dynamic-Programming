@@ -100,6 +100,76 @@ def visualizarTabela(dic):
     print(f'\n{df.to_string(index = False)}\n')
     return
 
+# Função que adiciona um novo item ao dicionário
+def dicAdicionar(dic):
+    adicionar_id = max(dic['ID']) + 1 # Gera novo ID automaticamente
+    dic['ID'].append(adicionar_id)
+    print('\n > ADICIONAR dados de insumo a tabela: \n')
+    for key in tipos.keys(): # Pede os dados conforme os tipos definidos
+        adicionar = tipos[key](f'{key}: ')
+        dic[key].append(adicionar)
+    return
+
+# Função que consulta e exibe os dados de um item do dicionário com base no ID informado
+def dicConsultar(dic, chave):
+    consultar = inputDic('Digite o ID do insumo que deseja CONSULTAR: ', dic, chave)
+    # indice_consultar = dic[chave].index(int(consultar)) # Notação O Grande: O(n) (menos eficiente)
+    indice_consultar = buscaBinaria(dic[chave], int(consultar)) # Notação O Grande: O(log n) (mais eficiente)
+    print('\n > Informações do insumo selecionado: \n')
+    for key in dic.keys():
+        print(key, end = ': ')
+        print(dic[key][indice_consultar])
+    return
+
+# Função que atualiza os dados de um item do dicionário com base no ID informado
+def dicAtualizar(dic, chave):
+    atualizar = inputDic('Digite o ID do insumo que deseja ATUALIZAR: ', dic, chave)
+    # indice_atualizar = dic[chave].index(int(atualizar)) # Notação O Grande: O(n) (menos eficiente)
+    indice_atualizar = buscaBinaria(dic[chave], int(atualizar)) # Notação O Grande: O(log n) (mais eficiente)
+    nome_insumo = dic['Nome_Insumo'][indice_atualizar]
+    chaves = list(tipos.keys())
+    opcoes_atualizar = list(map(str, range(0, len(chaves) + 1)))
+    print('\n > Opções de Atualizações: \n')
+    print('0 - Todos os Dados')
+    for i, chave_nome in enumerate(chaves, start = 1):
+        print(f'{i} - {chave_nome}')
+    tipo_atualizar = inputOpcoes(f'Quais dados voce quer ATUALIZAR de {nome_insumo}? ', opcoes_atualizar)
+    match tipo_atualizar:
+        case '0':  # Atualiza todos os campos
+            for key in tipos.keys():
+                mudanca = tipos[key](f'Atualizar {key}: ')
+                dic[key][indice_atualizar] = mudanca
+        case _: # Atualiza campos individuais
+            chave_atualizar = chaves[int(tipo_atualizar) - 1]
+            mudanca = tipos[chave_atualizar](f'Atualizar {chave_atualizar}: ')
+            dic[chave_atualizar][indice_atualizar] = mudanca
+    return
+
+# Função que exclui os dados de um item do dicionário com base no ID informado
+def dicExcluir(dic, chave):
+    excluir = inputDic('Digite o ID do incêndio que deseja EXCLUIR: ', dic, chave)
+    # indice_excluir = dic[chave].index(int(excluir)) # Notação O Grande: O(n) (menos eficiente)
+    indice_excluir = buscaBinaria(dic[chave], int(excluir)) # Notação O Grande: O(log n) (mais eficiente)
+    for key in dic.keys():
+        dic[key].pop(indice_excluir) # Remove os dados de todas as colunas para esse índice
+    return
+
+# Função que adiciona quantidade a um item do dicionário
+def dicAdicionarQuantidade(dic, chave):
+    adicionar = inputDic('Digite o ID do insumo que deseja ADICIONAR QUANTIDADE ao estoque: ', dic, chave)
+    # indice_adicionar = dic[chave].index(int(adicionar)) # Notação O Grande: O(n) (menos eficiente)
+    indice_adicionar = buscaBinaria(dic[chave], int(adicionar)) # Notação O Grande: O(log n) (mais eficiente)
+    nome_insumo = dic['Nome_Insumo'][indice_adicionar]
+    quantidade = inputInt(f'Digite a quantidade que deseja adicionar ao insumo {nome_insumo}: ')
+    dic['Estoque'][indice_adicionar] += quantidade
+    return
+
+def dicListarQuantidade(dic, chave):
+    return
+
+def dicRetirarQuantidade(dic, chave):
+    return
+
 ### VARIÁVEIS GLOBAIS ###
 
 # Dicionário principal com os dados do estoque de insumos
@@ -123,19 +193,20 @@ tipos = {
 }
 
 # Opções disponíveis no menu principal
-opcoes_menu = ['0', '1', '2', '3', '4', '5', '6', '7']
+opcoes_menu = ['0', '1', '2', '3', '4', '5', '6', '7', '8']
 
 ### CODIGO ###
 
 while True: # Laço principal do sistema com menu de navegação
     print('\n----- Estoque -----\n\n'
-          '1 - ADICIONAR NOVO insumo ao estoque \n'
-          '2 - ADICIONAR QUANTIDADE de insumo EXISTENTE ao estoque \n'
-          '3 - CONSULTAR dados de insumo no estoque \n'
-          '4 - ATUALIZAR dados de insumo no estoque \n'
-          '5 - LISTAR insumos por QUANTIDADE no estoque \n'
-          '6 - EXCLUIR dados de insumo no estoque \n'
-          '7 - RETIRAR insumo do estoque \n'
+          '1 - VISUALIZAR estoque de insumos \n'
+          '2 - ADICIONAR dados de um NOVO insumo ao estoque \n'
+          '3 - ADICIONAR QUANTIDADE de insumo EXISTENTE ao estoque \n'
+          '4 - CONSULTAR dados de insumo no estoque \n'
+          '5 - ATUALIZAR dados de insumo no estoque \n'
+          '6 - LISTAR insumos por QUANTIDADE no estoque \n'
+          '7 - EXCLUIR dados de insumo no estoque \n'
+          '8 - RETIRAR insumo do estoque \n'
           '0 - SAIR do sistema')
     
     # Escolha da opção do menu
@@ -143,19 +214,35 @@ while True: # Laço principal do sistema com menu de navegação
 
     match opcao:
         case '1':
-            input('\n1\nPressione qualquer tecla para voltar... ')
+            visualizarTabela(insumos)
+            input('\nPressione qualquer tecla para voltar... ')
         case '2':
-            input('\n2\nPressione qualquer tecla para voltar... ')
+            dicAdicionar(insumos)
+            input('\nNOVOS Dados foram ADICIONADOS!!!\nPressione qualquer tecla para voltar... ')
         case '3':
-            input('\n3\nPressione qualquer tecla para voltar... ')
+            visualizarTabela(insumos)
+            dicAdicionarQuantidade(insumos, 'ID')
+            input('\nQUANTIDADE de estoque ADICIONADA!!!\nPressione qualquer tecla para voltar... ')
         case '4':
-            input('\n4\nPressione qualquer tecla para voltar... ')
+            visualizarTabela(insumos)
+            dicConsultar(insumos, 'ID')
+            input('\nDados CONSULTADOS!!!\nPressione qualquer tecla para voltar... ')
         case '5':
-            input('\n5\nPressione qualquer tecla para voltar... ')
+            visualizarTabela(insumos)
+            dicAtualizar(insumos, 'ID')
+            input('\nDados ATUALIZADOS!!!\nPressione qualquer tecla para voltar... ')
         case '6':
-            input('\n6\nPressione qualquer tecla para voltar... ')
+            visualizarTabela(insumos)
+            dicListarQuantidade(insumos, 'ID')
+            input('\nInsumos LISTADOS!!!\nPressione qualquer tecla para voltar... ')
         case '7':
-            input('\n7\nPressione qualquer tecla para voltar... ')
+            visualizarTabela(insumos)
+            dicExcluir(insumos, 'ID')
+            input('\nDados EXCLUIDOS!!!\nPressione qualquer tecla para voltar... ')
+        case '8':
+            visualizarTabela(insumos)
+            dicRetirarQuantidade(insumos, 'ID')
+            input('\nInsumos RETIRADOS!!!\nPressione qualquer tecla para voltar... ')
         case '0': # Saida do sistema
             print('\n > SISTEMA FECHADO... \n')
             break
