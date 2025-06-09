@@ -9,7 +9,6 @@
 ### BIBLIOTECAS ###
 
 import pandas as pd # Biblioteca usada para criar e exibir tabelas
-from datetime import datetime # Biblioteca para tratar datas
 
 ### FUNÇÕES ###
 
@@ -40,16 +39,6 @@ def inputInt(msg):
         except ValueError:
             print('\n > Você deve digitar um valor inteiro!!! \n')
 
-# Função para entrada de datas no formato 'dd/mm/aaaa'
-def inputData(msg):
-    while True:
-        try:
-            data = input(msg)
-            data = datetime.strptime(data, '%d/%m/%Y') # Converte a string em objeto datetime
-            return data.strftime('%d/%m/%Y') # Retorna a data formatada
-        except ValueError:
-            print('\n > Formato de data invalido!!! \n')
-
 # Função que valida se um valor inserido existe em uma lista de chaves do dicionário
 def inputDic(msg, dic, chave):
     while True:
@@ -57,16 +46,6 @@ def inputDic(msg, dic, chave):
         if key in [str(i) for i in dic[chave]]:
             return key
         print('\n > Digite uma opção existente \n')
-
-# Função que procura e retorna o indice do maior elemento de uma lista
-def maiorElementoLista(lista):
-    maior = 0
-    maior_elemento = lista[maior]
-    for i in range(len(lista)):
-        if lista[i] > maior_elemento:
-            maior_elemento = lista[i]
-            maior = i
-    return maior
 
 # Função que procura e retorna o indice do menor elemento de uma lista
 def menorElementoLista(lista):
@@ -176,6 +155,7 @@ def dicAdicionarQuantidade(dic, chave):
     dic['Estoque'][indice_adicionar] += quantidade
     return
 
+# Função que lista os itens de um dicionario filtrando pela quantidade
 def dicListarQuantidade(dic):
     insumos_ordenados = {key: lista.copy() for key, lista in dic.items()}
     selectionSort(insumos_ordenados['Estoque'])
@@ -185,6 +165,7 @@ def dicListarQuantidade(dic):
     visualizarTabela(insumos_ordenados)
     return
 
+# Função que remove quantidade de um item do dicionário
 def dicRetirarQuantidade(dic, chave):
     visualizarTabela(dic)
     retirar = inputDic('Digite o ID do insumo que deseja RETIRAR do estoque: ', dic, chave)
